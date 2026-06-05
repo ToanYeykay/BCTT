@@ -60,14 +60,14 @@ if page == "Trang 1: Giới thiệu & EDA":
     """)
 
     st.divider()
-    st.subheader("1. Hiển thị dữ liệu mẫu (Raw Data)")
+    st.subheader("1. Hiển thị dữ liệu mẫu)")
     st.dataframe(df.head(10), use_container_width=True)
 
     st.subheader("2. Biểu đồ phân tích trực quan")
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write("**Phân phối điểm Rating (Nhãn)**")
+        st.write("**Phân phối điểm Rating**")
         fig1, ax1 = plt.subplots()
         sns.countplot(x='rating_given', data=df, palette='magma', ax=ax1)
         st.pyplot(fig1)
@@ -83,7 +83,7 @@ if page == "Trang 1: Giới thiệu & EDA":
     st.write("### Nhận xét về dữ liệu")
     st.write("""
     - **Dữ liệu phân bố:** Rating tập trung mạnh ở mức 5 sao, cho thấy dịch vụ ở mức xuất sắc.
-    - **Đặc trưng quan trọng:** Tâm trạng (`mood`) có tương quan thuận rõ rệt với Rating. 
+    - **Đặc trưng quan trọng:** Tâm trạng có tương quan thuận rõ rệt với Rating. 
     - **Tính thực tế:** Dữ liệu cho thấy khách hàng chi tiêu càng cao thường có tỉ lệ quay lại ổn định hơn, tạo tiền đề cho việc dự báo lòng trung thành.
     """)
 
@@ -145,8 +145,7 @@ elif page == "Trang 2: Triển khai Mô hình":
             [[new_total_spent, new_avg_rating, new_avg_mood]], 
             columns=['total_spent', 'avg_rating', 'avg_mood']
         )
-        
-        # Xử lý an toàn để tránh lỗi feature_names
+
         try:
             input_rep.columns = model_repeat.get_booster().feature_names
             proba_raw = model_repeat.predict_proba(input_rep)[0][1]
@@ -199,8 +198,7 @@ elif page == "Trang 3: Đánh giá & Hiệu năng":
     from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
     
     # Dữ liệu đầu vào cho phân loại
-    X_eval = user_df[['total_spent', 'avg_rating', 'avg_mood']].values
-    # Nhãn thực tế: 100% quay lại (mảng toàn số 1)
+    X_eval = user_df[['total_spent', 'avg_rating', 'avg_mood']].value
     y_true = np.ones(len(user_df)) 
     
     # Dự đoán nhãn (0/1) và xác suất (%)
@@ -213,7 +211,6 @@ elif page == "Trang 3: Đánh giá & Hiệu năng":
     prec = precision_score(y_true, y_pred)
     rec = recall_score(y_true, y_pred)
 
-    # 3. GIAO DIỆN TABS
     tab_r, tab_c, tab_h = st.tabs(["Đánh giá Rating", "Đánh giá Quay lại", "Lịch sử Huấn luyện"])
 
     # --- TAB 1: RATING (REGRESSION) ---
